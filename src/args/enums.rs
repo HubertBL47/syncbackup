@@ -1,3 +1,5 @@
+use strum_macros::EnumIter; // etc.
+
 pub enum ResultArgument{
     Ok(String),
     NoArgs,
@@ -13,7 +15,7 @@ pub enum ArgsType{
 
 // possible type of option passed
 // these option will be in a int where each bit indicate 1 option
-#[derive(Debug)]
+#[derive(Debug, EnumIter)]
 pub enum PossiblesOptions{
     CopyTo = 0b1,
     CopyFrom = 0b10,

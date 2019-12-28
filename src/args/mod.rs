@@ -4,11 +4,12 @@ use std::env; // for args
 use enums::ResultArgument;
 pub use enums::PossiblesOptions;
 use enums::ArgsType;
+use super::help;
 
 pub struct Args{
     command: String,
-    path_to_copy: String,
-    location: String,
+    path1: String,
+    path2: String,
     options: u32,
 }
 
@@ -20,12 +21,12 @@ impl Args {
         let command: String = args.next().unwrap();
         let mut options: u32 = 0;
 
-        let path_to_copy: String = match Args::get_next_argument(&mut args, &mut options){
+        let path1: String = match Args::get_next_argument(&mut args, &mut options){
             ResultArgument::Ok(v) => v,
             ResultArgument::NoArgs => return Err(String::from("Missing argument : File or directory not specified")),
             ResultArgument::ErrOption(s) => return Err(s),
         };
-        let location: String = match Args::get_next_argument(&mut args, &mut options){
+        let path2: String = match Args::get_next_argument(&mut args, &mut options){
             ResultArgument::Ok(v) => v,
             ResultArgument::NoArgs => return Err(String::from("Missing argument : location not specified")),
             ResultArgument::ErrOption(s) => return Err(s),
@@ -39,14 +40,10 @@ impl Args {
             };
         }
 
-        println!("path to copy: {}", path_to_copy);
-        println!("location: {}", path_to_copy);
-        println!("the value of option is {}",options );
-
         return Ok(Args{
             command,
-            path_to_copy,
-            location,
+            path1,
+            path2,
             options,
         });
     }
@@ -72,9 +69,9 @@ impl Args {
         match new_option.as_ref(){
             "copyto" => *all_options |= PossiblesOptions::CopyTo as u32,
             "copyfrom" => *all_options |= PossiblesOptions::CopyFrom as u32,
-            "help" => *all_options |= PossiblesOptions::Help as u32,
+            "help" => help::show_help(),
             _ => return Err(format!("Unknown option \"{}\"", new_option)),
-        }
+        };
         return Ok(());
     }
 
@@ -94,6 +91,18 @@ impl Args {
 
     pub fn options(&self)-> u32{
         return self.options;
+    }
+
+    pub fn command(&self) -> &String{
+        return &self.command;
+    }
+
+    pub fn path1(&self) -> &String{
+        return &self.path1;
+    }
+
+    pub fn path2(&self) -> &String{
+        return &self.path2;
     }
 
 }
