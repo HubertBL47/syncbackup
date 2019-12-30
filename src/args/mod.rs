@@ -5,11 +5,12 @@ use enums::ResultArgument;
 pub use enums::PossiblesOptions;
 use enums::ArgsType;
 use super::help;
+use std::path::PathBuf;
 
 pub struct Args{
     command: String,
-    path1: String,
-    path2: String,
+    path1: PathBuf,
+    path2: PathBuf,
     options: u32,
 }
 
@@ -20,18 +21,24 @@ impl Args {
         let mut args = env::args();
         let command: String = args.next().unwrap();
         let mut options: u32 = 0;
+        let mut path1: PathBuf = PathBuf::new();
+        let mut path2: PathBuf = PathBuf::new();
 
-        let path1: String = match Args::get_next_argument(&mut args, &mut options){
+        path1.push(match Args::get_next_argument(&mut args, &mut options){
             ResultArgument::Ok(v) => v,
             ResultArgument::NoArgs => return Err(String::from("Missing argument : File or directory not specified")),
             ResultArgument::ErrOption(s) => return Err(s),
-        };
-        let path2: String = match Args::get_next_argument(&mut args, &mut options){
+        });
+        Args::verified_path(&path1)?;
+        
+        path2.push(match Args::get_next_argument(&mut args, &mut options){
             ResultArgument::Ok(v) => v,
             ResultArgument::NoArgs => return Err(String::from("Missing argument : location not specified")),
             ResultArgument::ErrOption(s) => return Err(s),
-        };
+        });
         
+        Args::verified_path(&path2)?;
+
         loop{ // get all remaining options
             match Args::get_arg_value(args.next()) {
                 ArgsType::Argument(s) => return Err(format!("Unknown arguments \"{}\"", s)),
@@ -89,6 +96,13 @@ impl Args {
         }
     }
 
+    fn verified_path(path: &PathBuf) ->Result<(), String>{
+        return match path.exists(){
+            true => Ok(()),
+            false => Err(format!("Error, the path {:?} does not exist", path)),
+        };
+    }
+
     pub fn options(&self)-> u32{
         return self.options;
     }
@@ -97,11 +111,11 @@ impl Args {
         return &self.command;
     }
 
-    pub fn path1(&self) -> &String{
+    pub fn path1(&self) -> &PathBuf{
         return &self.path1;
     }
 
-    pub fn path2(&self) -> &String{
+    pub fn path2(&self) -> &PathBuf{
         return &self.path2;
     }
 
