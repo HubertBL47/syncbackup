@@ -5,13 +5,14 @@ use syncbackup::errorcode::ErrorCode;
 use syncbackup::sync::make_sync;
 
 fn main() {
+    let help_message = "\n\nFor more information use \"--help\"\n";
     let args = Args::new().unwrap_or_else( |err| {
-        eprintln!("{}\n\nFor more information use \"--help\"\n", &err);
-        std::process::exit(ErrorCode::Args as i32);
+        eprintln!("{}{}", err.err_message(), help_message);
+        std::process::exit(*err.err_code() as i32);
     });
 
     make_sync(args).unwrap_or_else( |err| {
-        eprintln!("{}\n\nFor more information use \"--help\"\n", &err);
+        eprintln!("{}{}", &err, help_message);
         std::process::exit(ErrorCode::Sync as i32);
     });
 

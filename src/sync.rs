@@ -2,20 +2,8 @@ use super::args;
 use std::fs;
 
 pub fn make_sync(args: args::Args) -> Result<(), String>{
-    println!("path 1 : {:?}",args.path1());
-    println!("path 2 : {:?}",args.path2());
-
-
-
-    let file = fs::metadata(args.path1()).unwrap();
-    println!("{:?}", file.file_type());
-    println!("len {:?}", file.len());
-
-    let dir = fs::metadata(args.path2()).unwrap();
-    println!("{:?}", dir.is_dir());
-    println!("len {:?}", dir.len());
-
-    if dir.modified().unwrap() > file.modified().unwrap(){
+    let (path1, path2) = get_metadata(&args)?;
+    if path1.modified().unwrap() > path2.modified().unwrap(){
         println!("most recent is second file");
     } else {
         println!("most recent is first file");
@@ -28,4 +16,20 @@ pub fn make_sync(args: args::Args) -> Result<(), String>{
     return Ok(());
 }
 
-fn copy_file_to(){}
+fn get_metadata(args: &args::Args) -> Result<(fs::Metadata, fs::Metadata), String>{
+    // verified if path are good if not, give an Err
+    let path1 = match fs::metadata(args.path1()){
+        Ok(v) => v,
+        Err(_) => return Err(format!("problem while opening \"{:?}\"", args.path1())),
+    };
+    let path2 = match fs::metadata(args.path2()){
+        Ok(v) => v,
+        Err(_) => return Err(format!("problem while opening \"{:?}\"", args.path1())),
+    };
+
+    return Ok((path1, path2));
+}
+
+fn copy_file_to(){
+
+}

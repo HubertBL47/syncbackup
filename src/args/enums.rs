@@ -1,12 +1,5 @@
 use strum_macros::EnumIter;
 
-pub enum ResultArgument{
-    Ok(String),
-    NoArgs,
-    ErrOption(String),
-}
-
-
 pub enum ArgsType{
     Argument(String),
     Option(String),
