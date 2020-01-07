@@ -12,8 +12,8 @@ fn main() {
     });
 
     make_sync(args).unwrap_or_else( |err| {
-        eprintln!("{}{}", &err, help_message);
-        std::process::exit(ErrorCode::Sync as i32);
+        eprintln!("{}{}", err.err_message(), help_message);
+        std::process::exit(*err.err_code() as i32);
     });
 
     std::process::exit(ErrorCode::NoError as i32);

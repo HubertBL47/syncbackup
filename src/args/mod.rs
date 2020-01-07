@@ -14,6 +14,9 @@ pub struct Args{
     options: u32,
 }
 
+// ajouter une verification pour pas que les 2 paths pointe vers le meme fichier.
+// ce fichier peut avoir le meme nom mais il ne faut poas que ca soit le meme. sinon on vas le copier dans lui meme.
+
 
 impl Args {
     pub fn new() -> Result<Args, Error>{

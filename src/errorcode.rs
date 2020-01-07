@@ -4,7 +4,8 @@ pub enum ErrorCode {
     MissingArgs,
     PathError,
     OptionError,
-    Sync,
+    CopyError,
+    MetadataError,
 }
 
 pub struct Error {
